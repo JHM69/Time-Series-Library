@@ -1,5 +1,3 @@
-#export CUDA_VISIBLE_DEVICES=0
-
 model_name=TimeMixer
 
 seq_len=96
@@ -9,9 +7,10 @@ down_sampling_window=2
 learning_rate=0.01
 d_model=16
 d_ff=32
-batch_size=16
+batch_size=32  # Reduced from 128
 train_epochs=20
 patience=10
+num_workers=0  # Reduced from 10 for CPU
 
 python -u run.py \
   --task_name long_term_forecast \
@@ -35,7 +34,8 @@ python -u run.py \
   --itr 1 \
   --d_model $d_model \
   --d_ff $d_ff \
-  --batch_size 128 \
+  --batch_size $batch_size \
+  --num_workers $num_workers \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
@@ -64,7 +64,8 @@ python -u run.py \
   --itr 1 \
   --d_model $d_model \
   --d_ff $d_ff \
-  --batch_size 128 \
+  --batch_size $batch_size \
+  --num_workers $num_workers \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
@@ -94,7 +95,8 @@ python -u run.py \
   --itr 1 \
   --d_model $d_model \
   --d_ff $d_ff \
-  --batch_size 128 \
+  --batch_size $batch_size \
+  --num_workers $num_workers \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
@@ -124,7 +126,8 @@ python -u run.py \
   --itr 1 \
   --d_model $d_model \
   --d_ff $d_ff \
-  --batch_size 128 \
+  --batch_size $batch_size \
+  --num_workers $num_workers \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \

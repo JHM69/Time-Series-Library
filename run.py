@@ -22,6 +22,12 @@ if __name__ == '__main__':
     # basic config
     parser.add_argument('--task_name', type=str, required=True, default='long_term_forecast',
                         help='task name, options:[long_term_forecast, short_term_forecast, imputation, classification, anomaly_detection]')
+
+    # TimeGRPO specific
+    parser.add_argument('--num_groups', type=int, default=4, help='number of groups for TimeGRPO')
+    parser.add_argument('--group_size', type=int, default=24, help='size of each group for TimeGRPO')
+    parser.add_argument('--policy_clip_range', type=float, default=0.2, help='policy clip range for TimeGRPO')
+
     parser.add_argument('--is_training', type=int, required=True, default=1, help='status')
     parser.add_argument('--model_id', type=str, required=True, default='test', help='model id')
     parser.add_argument('--model', type=str, required=True, default='Autoformer',
@@ -141,21 +147,15 @@ if __name__ == '__main__':
     parser.add_argument('--patch_len', type=int, default=16, help='patch length')
 
     args = parser.parse_args()
-    if torch.cuda.is_available() and args.use_gpu:
-        args.device = torch.device('cuda:{}'.format(args.gpu))
-        print('Using GPU')
-    else:
-        if hasattr(torch.backends, "mps"):
-            args.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
-        else:
-            args.device = torch.device("cpu")
-        print('Using cpu or mps')
+    
+    # Force CPU usage regardless of CUDA availability
+    args.use_gpu = False
+    args.device = torch.device('cpu')
+    print('Using CPU')
 
-    if args.use_gpu and args.use_multi_gpu:
-        args.devices = args.devices.replace(' ', '')
-        device_ids = args.devices.split(',')
-        args.device_ids = [int(id_) for id_ in device_ids]
-        args.gpu = args.device_ids[0]
+    if args.use_multi_gpu:
+        print('Warning: Multi-GPU setting is ignored when running on CPU')
+        args.use_multi_gpu = False
 
     print('Args in experiment:')
     print_args(args)
